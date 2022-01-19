@@ -1,10 +1,15 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import React from "react";
+import React, { useContext } from "react";
 import { Button, Card, Icon } from "react-native-elements";
 import { ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native";
+import { AppContext } from "../../context/context";
 
 const Home = () => {
+  const context = useContext(AppContext);
+
+  console.log(">context", context.state);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
