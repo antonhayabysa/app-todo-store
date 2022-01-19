@@ -5,6 +5,7 @@ import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 
 const App = () => {
     const [index, setIndex] = React.useState(0);
+    
     return (
             <SafeAreaView style={styles.container}>
                 <ScrollView>
