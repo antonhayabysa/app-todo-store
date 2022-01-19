@@ -1,51 +1,113 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Button, Card, Icon } from "react-native-elements";
 import { ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native";
 import { AppContext } from "../../context/context";
 
-const Home = () => {
-  const context = useContext(AppContext);
+const productsData = [
+  {
+    id: "1",
+    imageUrl:
+      "https://surlybikes.com/uploads/bikes/Straggler_BK2125_Background-1200x800.jpg",
+    title: "Road Bike",
+    text: "It's an exciting time to be buying a road bike, regardless of your budget. Never has there been such a choice at every price point. The category has expanded greatly in the last few years, reflecting trends, riding styles and improvements in design and manufacturing.",
+    buttonText: "Buy me 1.000$",
+  },
+  {
+    id: "2",
+    imageUrl:
+      "https://surlybikes.com/uploads/bikes/Straggler_BK2125_Background-1200x800.jpg",
+    title: "Road Bike",
+    text: "It's an exciting time to be buying a road bike, regardless of your budget. Never has there been such a choice at every price point. The category has expanded greatly in the last few years, reflecting trends, riding styles and improvements in design and manufacturing.",
+    buttonText: "Buy me 1.000$",
+  },
+];
 
-  console.log(">context", context.state);
+const ProductCard = ({ id, imageUrl, title, text, buttonText, onClick }) => {
+  return (
+    <Card>
+      <Card.Title>{title}</Card.Title>
+      <Card.Image
+        style={{ padding: 10 }}
+        source={{
+          uri: imageUrl,
+        }}
+      />
+      <Text style={{ marginBottom: 15, paddingTop: 15 }}>{text} </Text>
+      <Button
+        icon={
+          <Icon name="code" color="#ffffff" iconStyle={{ marginRight: 10 }} />
+        }
+        buttonStyle={{
+          borderRadius: 50,
+          marginLeft: 0,
+          marginRight: 0,
+          marginBottom: 25,
+        }}
+        title={buttonText}
+        onPress={() => onClick({ id })}
+      />
+    </Card>
+  );
+};
+
+const Home = () => {
+  const { state, setState } = useContext(AppContext);
+
+  console.log(">context", state);
+  const handleBuyClick = ({ id }) => {
+    const product = state.products.find((product) => product.id === id);
+
+    console.log(">product", product);
+
+    const productCartIndex = state.cart.findIndex(
+      (item) => item.product.id === id
+    );
+    const isProductInCart = productCartIndex !== -1;
+
+    let newCart = [];
+    if (isProductInCart) {
+      newCart = state.cart.map((item, index) => {
+        if (index === productCartIndex) {
+          return {
+            ...item,
+            quantity: item.quantity + 1,
+          };
+        } else {
+          return item;
+        }
+      });
+    } else {
+      newCart = [...state.cart, { quantity: 1, product }];
+    }
+
+    setState({
+      ...state,
+      cart: newCart,
+    });
+  };
+
+  useEffect(() => {
+    setState({ ...state, products: productsData });
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View>
+          {state.products.map((item) => (
+            <ProductCard
+              key={item.id}
+              id={item.id}
+              imageUrl={item.imageUrl}
+              text={item.text}
+              title={item.title}
+              buttonText={item.buttonText}
+              onClick={handleBuyClick}
+            />
+          ))}
           <Card>
-            <Card.Title>Road Bike</Card.Title>
-            <Card.Image
-              style={{ padding: 10 }}
-              source={{
-                uri: "https://surlybikes.com/uploads/bikes/Straggler_BK2125_Background-1200x800.jpg",
-              }}
-            />
-            <Text style={{ marginBottom: 15, paddingTop: 15 }}>
-              It's an exciting time to be buying a road bike, regardless of your
-              budget. Never has there been such a choice at every price point.
-              The category has expanded greatly in the last few years,
-              reflecting trends, riding styles and improvements in design and
-              manufacturing.
-            </Text>
-
-            <Button
-              icon={
-                <Icon
-                  name="code"
-                  color="#ffffff"
-                  iconStyle={{ marginRight: 10 }}
-                />
-              }
-              buttonStyle={{
-                borderRadius: 50,
-                marginLeft: 0,
-                marginRight: 0,
-                marginBottom: 25,
-              }}
-              title="Buy me 1.000$"
-            />
             <Card.Title>Mountain bikes</Card.Title>
             <Card.Image
               style={{ padding: 10 }}
